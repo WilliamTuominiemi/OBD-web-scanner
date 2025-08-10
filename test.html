@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Console Logger Test</title>
+  </head>
+  <body>
+    <h1>Test Page for Console Logger</h1>
+    <button onclick="testLogs()">Generate Test Logs</button>
+    <button onclick="testError()">Generate Error</button>
+    <button onclick="testWarning()">Generate Warning</button>
+
+    <script>
+      function testLogs() {
+        console.log('Button clicked - test log');
+        console.log('Current time:', new Date());
+        console.log('Random number:', Math.random());
+      }
+
+      function testError() {
+        console.error('This is a test error!');
+        console.error('Error with object:', { error: 'Something went wrong', code: 404 });
+      }
+
+      function testWarning() {
+        console.warn('This is a test warning!');
+      }
+
+      // Auto-generate some logs when page loads
+      setTimeout(() => {
+        console.log('Page loaded successfully');
+      }, 1000);
+
+      setTimeout(() => {
+        console.warn('This is an automatic warning after 3 seconds');
+      }, 3000);
+
+      setTimeout(() => {
+        console.error('This is an automatic error after 5 seconds');
+      }, 5000);
+
+      // Generate logs every 10 seconds
+      setInterval(() => {
+        console.log('Periodic log:', new Date().toLocaleTimeString());
+      }, 10000);
+    </script>
+  </body>
+</html>

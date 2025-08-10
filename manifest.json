@@ -3,17 +3,23 @@
   "name": "On-Board Diagnostics",
   "version": "1.0",
 
-  "description": "On-Board Diagnostics scanner for your web browser. Make tracking errors and warnings easier. ",
+  "description": "On-Board Diagnostics scanner for your web browser.",
   "homepage_url": "https://github.com/WilliamTuominiemi/OBD-web-scanner",
   "icons": {
     "48": "icons/obd-48.png"
   },
 
   "permissions": ["activeTab"],
-
   "browser_action": {
     "default_icon": "icons/obd-48.png",
     "default_title": "On-Board Diagnostics",
     "default_popup": "popup/log.html"
-  }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_scripts/logger.js"]
+    }
+  ]
 }
