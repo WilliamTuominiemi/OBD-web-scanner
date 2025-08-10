@@ -1,40 +1,41 @@
-function injectLogger() {
-  const script = document.createElement('script');
-  script.textContent = `
-    (function() {
-      let originalLog = console.log;
-      let originalWarn = console.warn;
-      let originalError = console.error;
+(() => {
+  if (window.top !== window) return;
 
-      console.log = function(...args) {
-        window.postMessage({ type: "FROM_PAGE_LOG", data: args }, "*");
-        originalLog.apply(console, args);
+  if (window.__contentLoggerRan) return;
+  window.__contentLoggerRan = true;
+
+  function injectLogger() {
+    const script = document.createElement('script');
+    script.textContent = `
+    (function() {
+      if (window.__loggerInjected) return;
+      window.__loggerInjected = true;
+
+      const send = (type, args) => {
+        window.postMessage({ type, data: args }, "*");
       };
-      console.warn = function(...args) {
-        window.postMessage({ type: "FROM_PAGE_WARN", data: args }, "*");
-        originalWarn.apply(console, args);
-      };
-      console.error = function(...args) {
-        window.postMessage({ type: "FROM_PAGE_ERROR", data: args }, "*");
-        originalError.apply(console, args);
-      };
+
+      const origLog = console.log;
+      console.log = function(...args) { send("FROM_PAGE_LOG", args); origLog.apply(console, args); };
+
+      const origWarn = console.warn;
+      console.warn = function(...args) { send("FROM_PAGE_WARN", args); origWarn.apply(console, args); };
+
+      const origErr = console.error;
+      console.error = function(...args) { send("FROM_PAGE_ERROR", args); origErr.apply(console, args); };
     })();
   `;
-  document.documentElement.appendChild(script);
-  script.remove();
-}
+    document.documentElement.appendChild(script);
+    script.remove();
+  }
 
-window.addEventListener('message', (event) => {
-  if (event.source !== window) return;
-  if (event.data.type && event.data.type === 'FROM_PAGE_LOG') {
-    console.log('Page log intercepted:', event.data.data);
-  }
-  if (event.data.type && event.data.type === 'FROM_PAGE_WARN') {
-    console.warn('Page warning intercepted:', event.data.data);
-  }
-  if (event.data.type && event.data.type === 'FROM_PAGE_ERROR') {
-    console.error('Page error intercepted:', event.data.data);
-  }
-});
+  window.addEventListener('message', (event) => {
+    if (event.source !== window) return;
+    const { type, data } = event.data || {};
+    if (type && type.startsWith('FROM_PAGE_')) {
+      browser.runtime.sendMessage({ logType: type, logData: data }).catch(() => {});
+    }
+  });
 
-injectLogger();
+  injectLogger();
+})();

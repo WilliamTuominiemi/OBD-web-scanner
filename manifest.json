@@ -10,6 +10,10 @@
   },
 
   "permissions": ["activeTab"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
   "browser_action": {
     "default_icon": "icons/obd-48.png",
     "default_title": "On-Board Diagnostics",
