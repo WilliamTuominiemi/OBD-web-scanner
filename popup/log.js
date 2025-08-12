@@ -24,15 +24,34 @@ function addLog(type, data) {
 
   div.textContent = `[${type.replace('FROM_PAGE_', '').toLowerCase()}] ${JSON.stringify(data)}`;
 
-  div.onclick = () => logClicked(type, data);
+  div.id = self.crypto.randomUUID();
+
+  div.onclick = () => logClicked(data, div.id);
 
   logContainer.appendChild(div);
 }
 
-function logClicked(type, data) {
-  console.log(`Log clicked: ${type}`, data);
+async function logClicked(data, id) {
+  const logEntry = document.getElementById(id);
+  const p = logEntry.querySelector('p');
 
-  askAI(data);
+  if (logEntry.classList.contains('expanded')) {
+    logEntry.className = 'log-entry';
+
+    if (p) {
+      p.style.display = 'none';
+    }
+  } else {
+    logEntry.className = 'log-entry expanded';
+
+    if (p) {
+      p.style.display = 'block';
+    } else {
+      const new_p = document.createElement('p');
+      new_p.textContent = await askAI(data);
+      logEntry.appendChild(new_p);
+    }
+  }
 }
 
 async function askAI(data) {
@@ -51,7 +70,9 @@ async function askAI(data) {
           {
             parts: [
               {
-                text: `Explain what is going on in this devtools log ${JSON.stringify(data)}`,
+                text: `Explain briefly with a few sentences what is going on in this devtools log ${JSON.stringify(
+                  data
+                )}`,
               },
             ],
           },
@@ -64,7 +85,7 @@ async function askAI(data) {
     }
 
     const result = await response.json();
-    console.log(result.candidates[0].content.parts[0].text);
+    return result.candidates[0].content.parts[0].text;
   } catch (error) {
     console.error(error.message);
   }

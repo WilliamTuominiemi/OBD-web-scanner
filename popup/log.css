@@ -1,4 +1,17 @@
 html,
 body {
-  width: 100px;
+  width: 500px;
+  height: 400px;
+  font-family: monospace;
+  margin: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.log-entry {
+  border-bottom: 1px solid #ccc;
+  padding: 5px 0;
+}
+.expanded {
+  border: 2px solid darkblue;
+  border-radius: 2px;
 }
