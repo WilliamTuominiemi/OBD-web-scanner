@@ -6,12 +6,20 @@ body {
   margin: 2px;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #555879;
+}
+#log-container {
+  width: 100%;
 }
 .log-entry {
-  border-bottom: 1px solid #ccc;
-  padding: 5px 0;
+  padding: 10px 0;
+  transition: transform 0.2s ease-in-out;
+  transform-origin: left center;
 }
-.expanded {
-  border: 2px solid darkblue;
-  border-radius: 2px;
+.log-entry:hover {
+  transform: scale(1.05);
+}
+p {
+  padding: 0 10px;
+  width: 90%;
 }

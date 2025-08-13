@@ -15,20 +15,26 @@ function addLog(type, data) {
   div.className = 'log-entry';
 
   if (type === 'FROM_PAGE_LOG') {
-    div.style.color = 'black';
+    div.style.color = '#F4EBD3';
   } else if (type === 'FROM_PAGE_WARN') {
-    div.style.color = 'orange';
+    div.style.color = '#FADA7A';
   } else if (type === 'FROM_PAGE_ERROR') {
-    div.style.color = 'red';
+    div.style.color = '#DA6C6C';
   }
 
-  div.textContent = `[${type.replace('FROM_PAGE_', '').toLowerCase()}] ${JSON.stringify(data)}`;
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  div.textContent = `[${timeStr}] [${type.replace('FROM_PAGE_', '').toLowerCase()}] ${JSON.stringify(data)}`;
 
   div.id = self.crypto.randomUUID();
 
   div.onclick = () => logClicked(data, div.id);
 
-  logContainer.appendChild(div);
+  if (logContainer.firstChild) {
+    logContainer.insertBefore(div, logContainer.firstChild);
+  } else {
+    logContainer.appendChild(div);
+  }
 }
 
 async function logClicked(data, id) {
